@@ -1,0 +1,141 @@
+[tool.poetry]
+name = "bomsquad-vulndb"
+version = "0.1.0"
+description = "Compilation of the National Vulnerability Database, and all public OSV data sources"
+authors = ["Timothy M. Wyatt <tmw@appcensus.io>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [
+    { include = "bomsquad/vulndb", from = "src" }
+]
+
+[tool.poetry.scripts]
+vulndb = "bomsquad.vulndb.cli.vulndb:app"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = "^1.10.9"
+psycopg2 = "^2.9.6"
+retry = "^0.9.2"
+google-cloud-storage = "^2.10.0"
+tomli = "^2.0.1"
+typer = "^0.9.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1"
+flake8 = "^6.0.0"
+mypy = "^1.0.0"
+poethepoet = "^0.18"
+pre-commit = "^3.0"
+pytest = "^7.1"
+pytest-cov = "^4.0"
+pyupgrade = "^3.1"
+reorder-python-imports = "^3.9.0"
+safety = "^2.3"
+shellcheck-py = "^0.9.0.2"
+typing-extensions = "^4.3"
+datamodel-code-generator = {extras = ["http"], version = "^0.20.0"}
+types-retry = "^0.9.9.3"
+types-requests = "^2.31.0.1"
+
+[tool.black]
+line-length = 100
+
+# https://coverage.readthedocs.io/en/latest/config.html#report
+[tool.coverage.report]
+fail_under = 50
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "\\.\\.\\.",
+    "if __name__ == \"__main__\":",
+    "raise AssertionError",
+]
+
+# https://coverage.readthedocs.io/en/latest/config.html#run
+[tool.coverage.run]
+branch = true
+command_line = "--module pytest src tests"
+data_file = "test-reports/.coverage"
+source = ["src"]
+
+# https://coverage.readthedocs.io/en/latest/config.html#xml
+[tool.coverage.xml]
+output = "test-reports/coverage.xml"
+
+# https://mypy.readthedocs.io/en/latest/config_file.html
+[tool.mypy]
+mypy_path = "src"
+namespace_packages = true
+explicit_package_bases = true
+junit_xml = "test-reports/mypy.xml"
+plugins = "pydantic.mypy"
+strict = true
+disallow_subclassing_any = false
+disallow_untyped_decorators = false
+ignore_missing_imports = true
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+warn_unreachable = true
+allow_untyped_calls = true
+
+# https://pydantic-docs.helpmanual.io/mypy_plugin/#configuring-the-plugin
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+# http://www.pydocstyle.org/en/latest/usage.html#configuration-files
+[tool.pydocstyle]
+convention = "numpy"
+
+# https://docs.pytest.org/en/latest/customize.html#adding-default-options
+[tool.pytest.ini_options]
+log_cli = true
+addopts = "-W error -W ignore::pytest.PytestUnraisableExceptionWarning -W ignore::DeprecationWarning --doctest-modules --exitfirst --failed-first --strict-config --strict-markers --verbosity=2 --junitxml=test-reports/pytest.xml"
+junit_family = "xunit2"
+testpaths = "tests"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+skipsdist = true
+envlist = py38, py39
+"""
+
+[tool.poe.tasks]
+    [tool.poe.tasks.build_code]
+    help = "Build python code"
+    cmd = "poetry build"
+
+    [tool.poe.tasks.test]
+    help = "Run all tests"
+    cmd = "poetry run pytest --cov=bomsquad.vulndb --cov-report html:test-reports/coverage/ --junit-xml=test-reports/pytest-report.xml"
+
+    [tool.poe.tasks.clean]
+    help = "Clean all build artifacts"
+    cmd = """
+      rm -rf dist && rm -rf test-reports
+    """
+
+  [tool.poe.tasks.lint]
+  help = "Lint this package"
+
+    [[tool.poe.tasks.lint.sequence]]
+    cmd = """
+      pre-commit run
+        --all-files
+        --color always
+      """
+
+    [[tool.poe.tasks.lint.sequence]]
+    shell = "safety check --full-report || true"
