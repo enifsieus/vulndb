@@ -15,7 +15,7 @@ class Config(BaseModel):
     database: str
     username: str
     password: str
-    nvd_api_key: Optional[str]
+    nvd_api_key: Optional[str] = None
     request_delay: int
     gcloud_project: str
 
