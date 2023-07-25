@@ -1,39 +1,28 @@
-from typing import Optional
+import logging
 
 import typer
+from rich.logging import RichHandler
 
-from bomsquad.vulndb.db.ingest import Ingest
+from bomsquad.vulndb.cli.ingest import nvd_app
+from bomsquad.vulndb.cli.ingest import osv_app
+from bomsquad.vulndb.cli.purl import purl_app
+
 
 app = typer.Typer()
 
-nvd_app = typer.Typer(name="nvd")
-app.add_typer(nvd_app)
-
-osv_app = typer.Typer(name="osv")
 app.add_typer(osv_app)
+app.add_typer(nvd_app)
+app.add_typer(purl_app)
 
 
-@nvd_app.command(name="ingest")
-def _nvd_ingest(
-    scope: Optional[str] = typer.Option(default=None, help="Ingest only cve or cpe "),
-    offset: int = typer.Option(default=0, help="Offset into available entries to begin wtih"),
-    limit: Optional[int] = typer.Option(default=None, help="Limit the number of entries to ingest"),
-) -> None:
-    if scope == "cve" or scope is None:
-        Ingest.cve(offset, limit)
-    if scope == "cpe" or scope is None:
-        Ingest.cpe(offset, limit)
-
-
-@osv_app.command(name="ingest")
-def _osv_ingest(
-    ecosystem: Optional[str] = typer.Option(default=None, help="Ingest only a single ecosystem"),
-    offset: int = typer.Option(default=0, help="Offset into available entries to begin wtih"),
-    limit: Optional[int] = typer.Option(default=None, help="Limit the number of entries to ingest"),
-) -> None:
-    if ecosystem:
-        Ingest.osv(ecosystem, offset, limit)
+@app.callback()
+def app_main(verbose: bool = False) -> None:
+    if verbose:
+        log_level = logging.DEBUG
     else:
-        if offset != 0 or limit:
-            raise ValueError("Offset and limit are only valid with a specific ecosystem")
-        Ingest.all_osv()
+        log_level = logging.INFO
+
+    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    logging.basicConfig(
+        level=log_level, format=format, datefmt="[%X]", handlers=[RichHandler(level=log_level)]
+    )
