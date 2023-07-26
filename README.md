@@ -25,10 +25,11 @@ $ sql -U <username> -d <database> -a -f db/create.sql
 
 The vulndb cli exposes the following commands:
 
-
 ### nvd
 
 #### ingest
+
+Ingest Vulnerability (CPE) and Product (CPE) records from the National Vulnerability Database (https://nvd.nist.gov).
 
 ```
 $ vulndb nvd ingest --help
@@ -45,6 +46,8 @@ Options:
 
 #### ingest
 
+Ingest records from the Open Source Vulnerability (https://osv.dev) dataset.
+
 ```
 $ vulndb osv ingest --help
 Usage: vulndb osv ingest [OPTIONS]
@@ -54,4 +57,23 @@ Options:
   --offset INTEGER  Offset into available entries to begin wtih  [default: 0]
   --limit INTEGER   Limit the number of entries to ingest
   --help            Show this message and exit.
+```
+
+### purl
+
+#### lookup
+
+Perform a lookup for vulnerability records for a given PURL. If the PURL is unversioned, then
+all known vulnerabilities associated with the PURL are reported. If the PRUL is versioned, then
+only applicable vulnerabilities for the specified version are reported.
+
+```
+$ vulndb purl lookup --help
+ Usage: vulndb purl lookup [OPTIONS] TARGET
+
+Arguments:
+  *    target      TEXT  [default: None] [required]                                                                                            │
+
+Options:
+  --help          Show this message and exit.                                                                                                  │
 ```
