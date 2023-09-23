@@ -3,10 +3,9 @@
 # https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html#line-length
 # TODO: https://github.com/PyCQA/flake8/issues/234
 doctests = True
-ignore = C416,C901,DAR103,E203,E501,FS003,S101,W503,S404,S601,S603,S607,S311,B008,N813,N815,S113,F722
+ignore = C901, E501
 max_line_length = 100
 max_complexity = 10
-exclude = rvi_capture.py, cli.py
 
 # https://github.com/terrencepreilly/darglint#flake8
 # TODO: https://github.com/terrencepreilly/darglint/issues/130
