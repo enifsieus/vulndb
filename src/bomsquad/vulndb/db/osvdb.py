@@ -78,3 +78,19 @@ class OSVDB:
             for row in results:
                 (data,) = row
                 yield self._materialize_openssf(data)
+
+    def find_by_id_or_alias(self, id: str) -> Iterable[OpenSSF]:
+        conn = self._db
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT
+                DISTINCT data->'id', data
+            FROM osv, jsonb_array_elements(data->'aliases') AS alias
+            WHERE data->'id' ? %s OR alias ? %s
+            """,
+            [id, id],
+        )
+        for row in cursor.fetchall():
+            _, data = row
+            yield self._materialize_openssf(data)
