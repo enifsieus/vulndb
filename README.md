@@ -64,16 +64,36 @@ Options:
 #### lookup
 
 Perform a lookup for vulnerability records for a given PURL. If the PURL is unversioned, then
-all known vulnerabilities associated with the PURL are reported. If the PRUL is versioned, then
+all known vulnerabilities associated with the PURL are reported. If the PURL is versioned, then
 only applicable vulnerabilities for the specified version are reported.
 
 ```
 $ vulndb purl lookup --help
  Usage: vulndb purl lookup [OPTIONS] TARGET
 
-Arguments:
-  *    target      TEXT  [default: None] [required]                                                                                            │
+╭─ Arguments ───────────────────────────────────╮
+│ *    target      TEXT  [default: None]        │
+╰───────────────────────────────────────────────╯
+╭─ Options ─────────────────────────────────────╮
+│ --help          Show this message and exit.   │
+╰───────────────────────────────────────────────╯
+```
 
-Options:
-  --help          Show this message and exit.                                                                                                  │
+### cve
+
+#### affected-purls
+
+Perform a lookup for PURLs associated with a given CVE. Prints a list of affected packages,
+associated identifiers, and affected version ranges.
+
+```
+# vulndb cve affected-purls --help
+ Usage: vulndb cve affected-purls [OPTIONS] ID
+
+╭─ Arguments ───────────────────────────────────╮
+│ *    id      TEXT  [default: None] [required] │
+╰───────────────────────────────────────────────╯
+╭─ Options ─────────────────────────────────────╮
+│ --help          Show this message and exit.   │
+╰───────────────────────────────────────────────╯
 ```
