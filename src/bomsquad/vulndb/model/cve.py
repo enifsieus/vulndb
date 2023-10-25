@@ -120,3 +120,15 @@ class CVE(BaseModel):
     configurations: List[Config] = []
     references: List[Reference] = []
     vendorComments: List[VendorComment] = []
+
+    def description(self, language: str = "en") -> str:
+        selected: str = "None"
+
+        if self.descriptions:
+            selected = self.descriptions[0]["value"]
+
+        for desc in self.descriptions:
+            if desc["lang"] == language:
+                selected = desc["value"]
+
+        return selected
