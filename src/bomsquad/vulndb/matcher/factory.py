@@ -67,5 +67,6 @@ class VersionRangeFactory:
                 f"[{low},{high}{']' if high_operator == '>=' else ')'}"
             )
 
-        spec = f"vers:{purl.type}/{low},{high_operator}{high}"
+        low_str = f"{low}," if low != "0" else ""
+        spec = f"vers:{purl.type}/{low_str}{high_operator}{high}"
         return VersionRange.from_string(spec)
