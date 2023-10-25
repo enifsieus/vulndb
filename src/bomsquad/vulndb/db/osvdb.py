@@ -1,3 +1,4 @@
+import logging
 from functools import cached_property
 from typing import Any
 from typing import Dict
@@ -10,6 +11,8 @@ from psycopg2.extensions import connection
 from bomsquad.vulndb.config import config
 from bomsquad.vulndb.db.error import InvalidDataError
 from bomsquad.vulndb.model.openssf import OpenSSF
+
+logger = logging.getLogger(__name__)
 
 
 class OSVDB:
@@ -94,3 +97,6 @@ class OSVDB:
         for row in cursor.fetchall():
             _, data = row
             yield self._materialize_openssf(data)
+
+
+instance = OSVDB()
