@@ -35,7 +35,7 @@ class Config(BaseModel):
     @classmethod
     def load(cls) -> "Config":
         with cls.resolve_config().open("rb") as fh:
-            obj = tomli.load(fh)["config"]
+            obj = tomli.load(fh)["vulndb"]
             config = Config.parse_obj(obj)
             return config
 

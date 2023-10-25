@@ -34,26 +34,26 @@ class CVSSv2(BaseModel):
     baseSeverity: str
     exploitabilityScore: float
     impactScore: float
-    acInsufInfo: Optional[bool]
-    obtainAllPrivilege: Optional[bool]
-    obtainUserPrivilege: Optional[bool]
-    obtainOtherPrivilege: Optional[bool]
-    userInteractionRequired: Optional[bool]
+    acInsufInfo: Optional[bool] = None
+    obtainAllPrivilege: Optional[bool] = None
+    obtainUserPrivilege: Optional[bool] = None
+    obtainOtherPrivilege: Optional[bool] = None
+    userInteractionRequired: Optional[bool] = None
 
 
 class CVSSv30(BaseModel):
     source: str
     type: Ordinal
     cvssData: CVSS30
-    exploitabilityScore: Optional[float]
-    impactScore: Optional[float]
+    exploitabilityScore: Optional[float] = None
+    impactScore: Optional[float] = None
 
 
 class CVSSv31(BaseModel):
     source: str
     type: Ordinal
     cvssData: CVSS31
-    exploitabilityScore: Optional[float]
+    exploitabilityScore: Optional[float] = None
     impactScore: Optional[float]
 
 
@@ -66,7 +66,7 @@ class Metrics(BaseModel):
 class Weakness(BaseModel):
     source: str
     type: str
-    description: Dict[str, str]
+    description: List[Dict[str, str]] = []
 
 
 class Operator(str, Enum):
@@ -85,21 +85,21 @@ class CPEMatch(BaseModel):
 
 
 class Node(BaseModel):
-    operator: Operator
+    operator: Optional[Operator] = None
     negate: bool = False
     cpeMatch: List[CPEMatch] = []
 
 
 class Config(BaseModel):
-    operator: Optional[Operator]
-    negate: bool = False
+    operator: Optional[Operator] = None
+    negate: Optional[bool] = False
     nodes: List[Node]
 
 
 class Reference(BaseModel):
-    url: str
-    source: Optional[str]
-    tags: Optional[List[str]]
+    url: Optional[str] = None
+    source: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 
 class VendorComment(BaseModel):
@@ -114,7 +114,7 @@ class CVE(BaseModel):
     published: datetime
     lastModified: datetime
     vulnStatus: CVEStatus
-    descriptions: Dict[str, str]
+    descriptions: List[Dict[str, str]] = []
     metrics: Metrics
     weaknesses: List[Weakness] = []
     configurations: List[Config] = []

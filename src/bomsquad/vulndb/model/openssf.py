@@ -21,7 +21,7 @@ class Severity(BaseModel):
 class Package(BaseModel):
     ecosystem: str
     name: str
-    purl: Optional[str]
+    purl: Optional[str] = None
 
 
 class RangeType(str, Enum):
@@ -31,22 +31,22 @@ class RangeType(str, Enum):
 
 
 class Event(BaseModel):
-    introduced: Optional[str]
-    fixed: Optional[str]
-    last_affected: Optional[str]
-    limit: Optional[str]
+    introduced: Optional[str] = None
+    fixed: Optional[str] = None
+    last_affected: Optional[str] = None
+    limit: Optional[str] = None
 
 
 class Range(BaseModel):
     type: RangeType
-    repo: Optional[str]
+    repo: Optional[str] = None
     events: List[Event] = []
     database_specific: Dict[Any, Any] = {}
 
 
 class Affected(BaseModel):
-    package: Optional[Package]
-    severity: Optional[Severity]
+    package: Optional[Package] = None
+    severity: Optional[Severity] = None
     ranges: List[Range] = []
     versions: List[str] = []
     ecosystem_specific: Dict[Any, Any] = {}
@@ -93,15 +93,15 @@ class Credit(BaseModel):
 
 
 class OpenSSF(BaseModel):
-    schema_version: Optional[str]
+    schema_version: Optional[str] = None
     id: str
-    published: Optional[datetime]
+    published: Optional[datetime] = None
     modified: datetime
-    withdrawn: Optional[datetime]
+    withdrawn: Optional[datetime] = None
     aliases: List[str] = []
     related: List[str] = []
-    summary: Optional[str]
-    details: Optional[str]
+    summary: Optional[str] = None
+    details: Optional[str] = None
     severity: List[Severity] = []
     affected: List[Affected] = []
     references: List[Reference] = []

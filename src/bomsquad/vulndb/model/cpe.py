@@ -22,7 +22,7 @@ class ReferenceType(str, Enum):
 
 
 class Reference(BaseModel):
-    type: Optional[ReferenceType]
+    type: Optional[ReferenceType] = None
     ref: str
 
 
@@ -37,7 +37,7 @@ class CPE(BaseModel):
     cpeNameId: UUID
     lastModified: datetime
     created: datetime
-    titles: List[Title]
+    titles: List[Title] = []
     refs: List[Reference] = []
     deprecatedBy: List[CPERef] = []
     deprecates: List[CPERef] = []
