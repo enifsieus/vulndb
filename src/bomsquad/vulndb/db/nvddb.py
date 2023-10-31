@@ -115,3 +115,6 @@ class NVDDB:
             for row in results:
                 (data,) = row
                 yield self._materialize_cpe(data)
+
+
+instance = NVDDB()
