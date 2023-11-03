@@ -59,7 +59,7 @@ class OSVDB:
             for row in results:
                 _, data = row
 
-                yield self._materialize_openssf(data)
+                yield self._materialize_openssf(data), data
 
     def ecosystems(self) -> Iterable[str]:
         conn = self._db
