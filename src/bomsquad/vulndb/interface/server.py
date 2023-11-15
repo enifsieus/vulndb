@@ -2,7 +2,7 @@ from flask import Flask, request
 import sys
 sys.path.append('../../../')
 from bomsquad.vulndb.view.purl_vulnerabilities import query as vulnerabilities
-from bomsquad.vulndb.db.nvddb import instance as nvddb
+from bomsquad.vulndb.db.connection import pool
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -125,26 +125,26 @@ def purl2cve():
 
     vulns = []
     if cve_ids:
-        conn = nvddb._db
-        cursor = conn.cursor()
-        sql = "SELECT data FROM cve WHERE data->>'id' IN (%s)" % ','.join(["'%s'" % cve_id for cve_id in cve_ids])
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        for cve in results:
-            cve = cve[0]
-            cve_id = cve['id']
-            vuln = {
-                'bom-ref': dict_cve_ids_to_bom_ref[cve_id],
-                "id": cve_id,
-                "source": get_source(cve_id),
-                "ratings": get_ratings(cve['metrics'], min_severity),
-                "cwes": get_cwes(cve['weaknesses']),
-                "description": get_description(cve['descriptions']),
-                "published": cve['published'],
-                "updated": cve['lastModified'],
-            }
-            if vuln['ratings'] or min_severity is None:
-                vulns.append(vuln)
+        with pool.get() as conn:
+            cursor = conn.cursor()
+            sql = "SELECT data FROM cve WHERE data->>'id' IN (%s)" % ','.join(["'%s'" % cve_id for cve_id in cve_ids])
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            for cve in results:
+                cve = cve[0]
+                cve_id = cve['id']
+                vuln = {
+                    'bom-ref': dict_cve_ids_to_bom_ref[cve_id],
+                    "id": cve_id,
+                    "source": get_source(cve_id),
+                    "ratings": get_ratings(cve['metrics'], min_severity),
+                    "cwes": get_cwes(cve['weaknesses']),
+                    "description": get_description(cve['descriptions']),
+                    "published": cve['published'],
+                    "updated": cve['lastModified'],
+                }
+                if vuln['ratings'] or min_severity is None:
+                    vulns.append(vuln)
 
     if request.method == 'GET':
         return {'vulnerabilities': vulns}
